@@ -43,10 +43,9 @@ RUN apt-get update && apt-get install -y \
     ca-certificates curl wget xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# 安装 s6-overlay（ARM64）
-RUN curl -L -o /tmp/s6-overlay.tar.xz \
-      https://github.com/just-containers/s6-overlay/releases/download/v3.1.5.0/s6-overlay-aarch64.tar.xz && \
-    tar -xJf /tmp/s6-overlay.tar.xz -C / && \
+# 使用仓库内的 s6-overlay（永不失败）
+COPY assets/s6-overlay-aarch64.tar.xz /tmp/s6-overlay.tar.xz
+RUN tar -xJf /tmp/s6-overlay.tar.xz -C / && \
     rm /tmp/s6-overlay.tar.xz && \
     test -f /init
 
