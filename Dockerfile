@@ -43,10 +43,13 @@ RUN apt-get update && apt-get install -y \
     ca-certificates curl wget xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# 使用仓库内的 s6-overlay（永不失败）
+# 使用仓库内的 s6-overlay（两步解压，永不失败）
 COPY assets/s6-overlay-aarch64.tar.xz /tmp/s6-overlay.tar.xz
-RUN tar -xJf /tmp/s6-overlay.tar.xz -C / && \
-    rm /tmp/s6-overlay.tar.xz && \
+
+# 两步解压：先解 xz，再解 tar
+RUN xz -d /tmp/s6-overlay.tar.xz && \
+    tar -xf /tmp/s6-overlay.tar -C / && \
+    rm /tmp/s6-overlay.tar && \
     test -f /init
 
 # 拷贝 Transmission 二进制
