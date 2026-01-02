@@ -1,9 +1,9 @@
-name: 构建 Transmission Beta ARM64
+name: Build Transmission Beta ARM64 (Auto + s6-overlay)
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'   # 每天检查一次
+    - cron: '0 0 * * *'
 
 permissions:
   contents: write
@@ -25,7 +25,6 @@ jobs:
         run: |
           VERSION=$(curl -s https://api.github.com/repos/just-containers/s6-overlay/releases/latest | jq -r '.tag_name')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Latest s6-overlay: $VERSION"
 
       - name: Read current s6-overlay version
         id: s6cur
@@ -36,7 +35,6 @@ jobs:
             CUR="none"
           fi
           echo "current=$CUR" >> $GITHUB_OUTPUT
-          echo "Current s6-overlay: $CUR"
 
       ###############################################
       # 2. 获取最新 Transmission Beta Tag
@@ -49,7 +47,6 @@ jobs:
             "https://api.github.com/repos/transmission/transmission/tags?per_page=100" \
             | jq -r '.[].name' | grep beta | head -n 1)
           echo "latest_tag=$TAG" >> $GITHUB_OUTPUT
-          echo "Latest Transmission: $TAG"
 
       - name: Check if Transmission tag exists in GHCR
         id: checkghcr
@@ -71,9 +68,7 @@ jobs:
         if: |
           steps.s6ver.outputs.version == steps.s6cur.outputs.current &&
           steps.checkghcr.outputs.skip_transmission == 'true'
-        run: |
-          echo "No updates for s6-overlay or Transmission. Stop."
-          exit 0
+        run: exit 0
 
       ###############################################
       # 4. 下载最新 s6-overlay（如果有更新）
