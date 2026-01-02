@@ -1,0 +1,11 @@
+#!/usr/bin/with-contenv sh
+
+echo "[save-settings] 自动同步 settings.json 启动"
+
+while true; do
+    transmission-remote --session-info >/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        transmission-remote --session-info --save-settings >/dev/null 2>&1
+    fi
+    sleep 5
+done

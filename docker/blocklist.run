@@ -1,0 +1,12 @@
+#!/usr/bin/with-contenv sh
+
+echo "[blocklist] 自动更新 blocklist 启动"
+
+while true; do
+    wget -q -O /config/blocklists/blocklist.gz \
+      https://github.com/Naunter/BT_BlockLists/raw/master/bt_blocklists.gz
+
+    transmission-remote --blocklist-update >/dev/null 2>&1
+
+    sleep 86400
+done

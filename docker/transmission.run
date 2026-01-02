@@ -1,0 +1,7 @@
+#!/usr/bin/with-contenv sh
+
+echo "[run] 启动 Transmission..."
+exec s6-setuidgid transmission \
+  transmission-daemon -f -g /config \
+  --username ${TRANSMISSION_WEBUI_USER:-admin} \
+  --password ${TRANSMISSION_WEBUI_PASS:-admin123}
